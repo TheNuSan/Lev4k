@@ -48,9 +48,9 @@ Use for general development. Only minimal crinklering but nothing extra included
 Creates a bigger exe similar to Debug, but with keyboard controls for pausing and seeking around temporally.
 
 ## Acknowledgements
-Original Leviathan 2.0: https://github.com/armak/Leviathan-2.0
-Shader Minifier: https://github.com/laurentlb/Shader_Minifier
-Crinkler: https://github.com/runestubbe/Crinkler
-4klang: https://github.com/hzdgopher/4klang
-dr_wav: https://github.com/mackron/dr_libs/blob/master/dr_wav.h
-stb_image_write: https://github.com/nothings/stb/blob/master/stb_image_write.h
+- Original Leviathan 2.0: https://github.com/armak/Leviathan-2.0
+- Shader Minifier: https://github.com/laurentlb/Shader_Minifier
+- Crinkler: https://github.com/runestubbe/Crinkler
+- 4klang: https://github.com/hzdgopher/4klang
+- dr_wav: https://github.com/mackron/dr_libs/blob/master/dr_wav.h
+- stb_image_write: https://github.com/nothings/stb/blob/master/stb_image_write.h
