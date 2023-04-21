@@ -52,17 +52,17 @@
 #include "gldefs.h"
 #define const
 #include "shaders/fragment.inl"
-#include "shaders/vert.inl"
 #undef const
 
 PID_QUALIFIER int pidMain;
-PID_QUALIFIER int pidPart;
 PID_QUALIFIER int pidPost;
-PID_QUALIFIER int pidVert;
 
 #define TIME_VAR_NAME "m"
 #define PRETIME_VAR_NAME "pm"
+#define NEED_PREVTIME 0
+#if NEED_PREVTIME
 int prevTime=0;
+#endif
 
 #if RECORD_IMG || RECORD_SFX
 #include "export.h"
@@ -124,60 +124,25 @@ int __cdecl main(int argc, char* argv[])
 	// initalize opengl
 	SetPixelFormat(hDC, ChoosePixelFormat(hDC, &pfd), &pfd);
 	wglMakeCurrent(hDC, wglCreateContext(hDC));
-
-	GLuint pipeline;
-	glGenProgramPipelines(1, &pipeline);
-	glBindProgramPipeline(pipeline);
-
+	
 	#if NOT_USE_MINIFIER
 		refreshShaders(true);
 	#else
 		pidMain = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fragment_frag);
-
-		// switch shader main function
+		
 		fragment_frag[MULTI_MAIN_LOCATION] = '2';
-		pidPart = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fragment_frag);
-
-		fragment_frag[MULTI_MAIN_LOCATION] = '3';
 		pidPost = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fragment_frag);
 
 		#if AUDIO_TYPE == AUDIO_SHAUDIO
-			fragment_frag[MULTI_MAIN_LOCATION] = '4';
+			fragment_frag[MULTI_MAIN_LOCATION] = '3';
 			pidMusic = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fragment_frag);
 			#if SHAUDIO_REVERB
-			fragment_frag[MULTI_MAIN_LOCATION] = '5';
+			fragment_frag[MULTI_MAIN_LOCATION] = '4';
 			pidMusicReverb = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fragment_frag);
 			#endif
 		#endif
-
-		pidVert = glCreateShaderProgramv(GL_VERTEX_SHADER, 1, &vertex_vert);
 	#endif
 
-	glEnable(GL_PROGRAM_POINT_SIZE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_ONE, GL_ONE);
-
-	// TMP
-	glEnable(GL_TEXTURE);
-	glEnable(GL_TEXTURE0);
-	
-	glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, pidVert);
-	glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, pidMain);
-
-	GLuint fbopart[3];
-	GLuint texturePart[3];
-	
-	glGenTextures(3, texturePart);
-	glGenFramebuffers(3, fbopart);
-	for (int i = 0; i < 3; ++i) {
-		glBindFramebuffer(GL_FRAMEBUFFER, fbopart[i]);
-
-		glBindTexture(GL_TEXTURE_2D, texturePart[i]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, XRES, YRES, 0, GL_LUMINANCE_ALPHA, GL_FLOAT, NULL);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texturePart[i], 0);
-	}
-	//glFinish();
-		
 	// initialize editor
 		
 	#ifdef EDITOR_CONTROLS
@@ -185,10 +150,9 @@ int __cdecl main(int argc, char* argv[])
 	#endif
 
 	// initialize sound
-	
-	
+		
 	AudioInit();
-	
+		
 	// main loop
 	do
 	{
@@ -209,114 +173,51 @@ int __cdecl main(int argc, char* argv[])
 			
 		AudioUpdate();
 
-		////////////////
-		// SIMULATION //
-		////////////////
-
-		// render the particle position texture
-		glBindFramebuffer(GL_FRAMEBUFFER, fbopart[0]);
-		
-		glUseProgram(pidPart);
-
-		glActiveTexture(GL_TEXTURE0 + 0);
-		glBindTexture(GL_TEXTURE_2D, fbopart[1]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glUniform1i(glGetUniformLocation(pidPart, "sb1"), 0);
-
-		glActiveTexture(GL_TEXTURE0 + 1);
-		glBindTexture(GL_TEXTURE_2D, fbopart[2]);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glUniform1i(glGetUniformLocation(pidPart, "sb2"), 1);
-
-		glUniform1i(glGetUniformLocation(pidPart, PRETIME_VAR_NAME), prevTime);
-		prevTime = AudioGetTime();
-		glUniform1i(glGetUniformLocation(pidPart, TIME_VAR_NAME), prevTime);
-
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		glRects(-1, -1, 1, 1);
-
 		////////////////////////////
-		// POINT SPRITE RENDERING //
+		// MAIN RENDERING //
 		////////////////////////////
 
-		glBindFramebuffer(GL_FRAMEBUFFER, fbopart[2]);
-		
-		//glUseProgram(pidMain);
-		//glUniform1i(glGetUniformLocation(pidMain, TIME_VAR_NAME), AudioGetTime());
-
-		// render the sprites
-		#ifdef EDITOR_CONTROLS
-			glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, pidVert);
-			glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, pidMain);
-		#endif
-
-		glActiveTexture(GL_TEXTURE0 + 0);
-		glBindTexture(GL_TEXTURE_2D, fbopart[0]);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		//glUniform1i(glGetUniformLocation(pidMain, "sb1"), 0);
-		glUniform1i(glGetUniformLocation(pidVert, "sb1"), 0);
-
-		glUseProgram(0);
-		
-		//glColor3ui(AudioGetTime(), 0, 0);
-		
-		//glUseProgram(pidVert);
-		//ShaderBindTime(pidVert);
-
-		glClear(GL_COLOR_BUFFER_BIT);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glUseProgram(pidMain);
 				
 		#ifdef EDITOR_CONTROLS
 			glUniform3f(glGetUniformLocation(pidMain, "camPos"), editor.camPosX, editor.camPosY, editor.camPosZ);
 			glUniform3f(glGetUniformLocation(pidMain, "camRot"), editor.camRotX, editor.camRotY, 0);
 		#endif
 
+		#if NEED_PREVTIME
+			glUniform1i(glGetUniformLocation(pidMain, PRETIME_VAR_NAME), prevTime);
+			prevTime = AudioGetTime();
+			glUniform1i(glGetUniformLocation(pidMain, TIME_VAR_NAME), prevTime);
+		#else
+			glUniform1i(glGetUniformLocation(pidMain, TIME_VAR_NAME), AudioGetTime());
+		#endif
+
 		#if USE_MIDI
 			ShaderBindMidi(pidMain);
 		#endif
 
-		//glRects(-1, -1, 1, 1);
-		/*glBegin(GL_POINTS);
-		glTexCoord1f(AudioGetTime());
-		for (int i = 0; i < 1000000; ++i) {
-			glVertex2s(i,i);
-		}		
-		glEnd();*/
-		glTexCoord1f(AudioGetTime());
-		//glDrawArrays(GL_POINTS, 0, 250000);
-		glDrawArrays(GL_POINTS, 0, 500000);
+		glRects(-1, -1, 1, 1);
 
 		//////////////////
 		// POST-PROCESS //
 		//////////////////
-		/*
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		*/
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		glBindTexture(GL_TEXTURE_2D, 1);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, XRES, YRES, 0);
+		
+		glActiveTexture(GL_TEXTURE0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		glUseProgram(pidPost);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		glActiveTexture(GL_TEXTURE0 + 0);
-		glBindTexture(GL_TEXTURE_2D, fbopart[2]);
 
 		glUniform1i(glGetUniformLocation(pidPost, "sb1"), 0);
 		glUniform1i(glGetUniformLocation(pidPost, TIME_VAR_NAME), AudioGetTime());
 
 		glRects(-1, -1, 1, 1);
-
-		// swap simulation buffers
-		GLuint tmp = fbopart[0];
-		fbopart[0] = fbopart[2];
-		fbopart[2] = fbopart[1];
-		fbopart[1] = tmp;
-
-		//glFinish();
 
 		SwapBuffers(hDC);
 

@@ -27,6 +27,7 @@ __forceinline void RenderMusic() {
 	glBindFramebuffer(GL_FRAMEBUFFER, fbomusic);
 
 	glBindTexture(GL_TEXTURE_2D, textureMusic[0]);
+	// Use luminance alpha as texture format so that we have only two channel, like we need for audio
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, SHAUDIO_XRES, SHAUDIO_YRES, 0, GL_LUMINANCE_ALPHA, GL_FLOAT, NULL);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureMusic[0], 0);
 

@@ -12,9 +12,23 @@ It has been used for all my 4k intros, but this is a fresh start so you will onl
 * Export: audio to .wav for rendering a video (define RECORD_SFX)
 * Export: frame-by-frame in png or jpg for rendering a video (define RECORD_IMG, do it separate from audio)
 * Particle simulation & rendering: in the Primordial Awakening branch
+* Camera location: can be used in editor for debug or finding cool camera spots
 
 ## Compatibility
 Current version intended to be used with Visual Studio 2017 (any version). Make sure you have a version with the latest Windows SDK installed (at least version 10.0.17134.0), or use version 8.1. With some extra configuration 2015 and 2013 should work as well.
+
+## Quick start
+- open fragment.frag file
+- change "m1" function for your main rendering
+- change "m2" function for your post-process pass
+- change "m3" function for your music
+- compile in "editor" config and press f5 to see the result
+- when ready compile in "snapshot" or "release" (longer compilation time), you will find your final exe in out directory
+
+## Shortcuts in editor mode
+- alt+arrow left/right: seek in time backward/forward (+shift to go faster)
+- alt+up pause, alt+down play
+- alt+space play from start
 
 ## 4klang usage
 If you want to use 4klang instead of shader audio, you will have to:

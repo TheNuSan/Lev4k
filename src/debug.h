@@ -127,26 +127,19 @@ static bool shaderDebug(const char* shader, GLenum type, bool kill_on_failure = 
 				extern int pidMain;
 				pidMain = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &newSource);
 				//free(newSource);
-
-				// switch shader main function
-				// we have to add one because reading the shader in binaries "add" a \r to each line
-				// and the define is on the second line
-				newSource[MULTI_MAIN_LOCATION+1] = '2';				
-				extern int pidPart;
-				pidPart = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &newSource);
-				
-				newSource[MULTI_MAIN_LOCATION + 1] = '3';
+								
+				newSource[MULTI_MAIN_LOCATION + 1] = '2';
 				extern int pidPost;
 				pidPost = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &newSource);
 
 				#if AUDIO_TYPE == AUDIO_SHAUDIO
-					newSource[MULTI_MAIN_LOCATION+1] = '4';
+					newSource[MULTI_MAIN_LOCATION+1] = '3';
 					//shaderDebug(newSource, false, "fragment.frag m3");
 					extern int pidMusic;
 					pidMusic = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &newSource);
 
 					#if SHAUDIO_REVERB
-						newSource[MULTI_MAIN_LOCATION+1] = '5';
+						newSource[MULTI_MAIN_LOCATION+1] = '4';
 						//shaderDebug(newSource, false, "fragment.frag m4");
 						extern int pidMusicReverb;
 						pidMusicReverb = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &newSource);
@@ -162,16 +155,6 @@ static bool shaderDebug(const char* shader, GLenum type, bool kill_on_failure = 
 					//}
 				#endif
 						
-				char* newVertSource = updateShader("./src/shaders/vertex.vert");
-				if (newVertSource) {
-
-					shaderDebug(newVertSource, GL_VERTEX_SHADER, false, "vertex.vert");
-					extern int pidVert;
-					pidVert = glCreateShaderProgramv(GL_VERTEX_SHADER, 1, &newVertSource);
-
-					free(newVertSource);
-				}
-
 				lastLoad = timeGetTime() - start;
 			}
 		}

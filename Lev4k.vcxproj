@@ -184,7 +184,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PreBuildEvent>
-      <Command>shader_minifier.exe -v -o .\src\shaders\fragment.inl .\src\shaders\fragment.frag --no-renaming-list m1,m2,m3,m4,gl_TexCoord"</Command>
+      <Command>shader_minifier.exe -v --preserve-externals -o .\src\shaders\fragment.inl .\src\shaders\fragment.frag --no-renaming-list m1,m2,m3,m4"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Export|Win32'">
@@ -395,8 +395,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PreBuildEvent>
-      <Command>shader_minifier.exe -v --preserve-externals -o .\src\shaders\fragment.inl .\src\shaders\fragment.frag --no-renaming-list m1,m2,m3,m4"
-shader_minifier.exe -v --preserve-externals -o .\src\shaders\vert.inl .\src\shaders\vertex.vert</Command>
+      <Command>shader_minifier.exe -v --preserve-externals -o .\src\shaders\fragment.inl .\src\shaders\fragment.frag --no-renaming-list m1,m2,m3,m4"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">
@@ -473,8 +472,7 @@ shader_minifier.exe -v --preserve-externals -o .\src\shaders\vert.inl .\src\shad
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PreBuildEvent>
-      <Command>shader_minifier.exe -v --preserve-externals -o .\src\shaders\fragment.inl .\src\shaders\fragment.frag --no-renaming-list m1,m2,m3,m4"
-shader_minifier.exe -v --preserve-externals -o .\src\shaders\vert.inl .\src\shaders\vertex.vert</Command>
+      <Command>shader_minifier.exe -v --preserve-externals -o .\src\shaders\fragment.inl .\src\shaders\fragment.frag --no-renaming-list m1,m2,m3,m4"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -533,8 +531,6 @@ shader_minifier.exe -v --preserve-externals -o .\src\shaders\vert.inl .\src\shad
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </None>
     <None Include="src\shaders\fragment.inl" />
-    <None Include="src\shaders\vert.inl" />
-    <None Include="src\shaders\vertex.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

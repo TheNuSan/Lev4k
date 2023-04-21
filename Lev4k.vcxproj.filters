@@ -41,12 +41,6 @@
     <None Include="src\shaders\fragment.frag">
       <Filter>shaders</Filter>
     </None>
-    <None Include="src\shaders\vertex.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="src\shaders\vert.inl">
-      <Filter>shaders</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ext">
