@@ -7,7 +7,7 @@ It has been used for all my 4k intros, but this is a fresh start so you will onl
 
 ## Added Features
 * Audio: 4klang song can be paused/seeked in editor mode without needing to made a .wav
-* Audio: shader based generation, with option for postprocess pass (reverb, delays) and an experimental "real time" mode with midi capabilities
+* Audio: shader based generation, with option for postprocess pass (reverb, delays) and an experimental "real time" mode with midi input capabilities
 * Shader: multipasses frome same shader file (using hacky defines), music and visuals can share code
 * Export: audio to .wav for rendering a video (define RECORD_SFX)
 * Export: frame-by-frame in png or jpg for rendering a video (define RECORD_IMG, do it separate from audio)
@@ -22,6 +22,7 @@ Current version intended to be used with Visual Studio 2017 (any version). Make 
 - change "m1" function for your main rendering
 - change "m2" function for your post-process pass
 - change "m3" function for your music
+- change your intro duration in Shaudio.h SONG_DURATION, SHAUDIO_YRES must be adjusted accordingly so MAX_SAMPLES is inferior to SHAUDIO_XRES * SHAUDIO_YRES
 - compile in "editor" config and press f5 to see the result
 - when ready compile in "snapshot" or "release" (longer compilation time), you will find your final exe in out directory
 
@@ -45,3 +46,11 @@ The real deal. No-nonsense max crinklering with minimum extra. Use this for occa
 Use for general development. Only minimal crinklering but nothing extra included. Useful still for keeping track of relative size changes. This configuration overwrites Release configuration binaries, but doesn't generate and overwrite crinkler report.
 ### Editor
 Creates a bigger exe similar to Debug, but with keyboard controls for pausing and seeking around temporally.
+
+## Acknowledgements
+Original Leviathan 2.0: https://github.com/armak/Leviathan-2.0
+Shader Minifier: https://github.com/laurentlb/Shader_Minifier
+Crinkler: https://github.com/runestubbe/Crinkler
+4klang: https://github.com/hzdgopher/4klang
+dr_wav: https://github.com/mackron/dr_libs/blob/master/dr_wav.h
+stb_image_write: https://github.com/nothings/stb/blob/master/stb_image_write.h
