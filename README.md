@@ -4,6 +4,7 @@ A 4 kilobyte intro framework based on Leviathan 2.0 but with added/tweaked featu
 Warning: this tool is not stable but made to be hacked around while making each intro
 It has been used for all my 4k intros, but this is a fresh start so you will only find:
 - Default sample with basic raymarching + postprocess + shader sound (main branch)
+- LastFrameBuffer branch: give you access to last frame so you can do feedback effects
 - Primordial Awakening (Revision 2023) https://www.pouet.net/prod.php?which=94122 (separate branch)
 
 ## Added Features
@@ -16,7 +17,7 @@ It has been used for all my 4k intros, but this is a fresh start so you will onl
 * Camera location: can be used in editor for debug or finding cool camera spots
 
 ## Compatibility
-Current version intended to be used with Visual Studio 2017 (any version). Make sure you have a version with the latest Windows SDK installed (at least version 10.0.17134.0), or use version 8.1. With some extra configuration 2015 and 2013 should work as well.
+Current version intended to be used with Visual Studio 2017 (any version). Make sure you have a version with the latest Windows SDK installed (at least version 10.0.17134.0), or use version 8.1. With some extra configuration 2015 and 2013 should work as well. Some people had a struct_packing issue while compiling in snapshot/release, changing "Struct Member Alignment" in the project settings to "default" fixed it.
 
 ## Quick start
 - open fragment.frag file
