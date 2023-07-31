@@ -149,10 +149,23 @@ int __cdecl main(int argc, char* argv[])
 		Lev4k::Editor editor = Lev4k::Editor();
 	#endif
 
-	// initialize sound
-		
+	// initialize sound		
 	AudioInit();
-		
+
+	// init ping-pong screen buffer
+	glActiveTexture(GL_TEXTURE0);
+	GLuint fboframe[2];
+	GLuint textureframe[2];
+	glGenTextures(2, textureframe);
+	glGenFramebuffers(2, fboframe);
+	for (int i = 0; i < 2; ++i) {
+		glBindFramebuffer(GL_FRAMEBUFFER, fboframe[i]);
+
+		glBindTexture(GL_TEXTURE_2D, textureframe[i]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, XRES, YRES, 0, GL_RGBA, GL_FLOAT, NULL);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureframe[i], 0);
+	}
+	
 	// main loop
 	do
 	{
@@ -177,7 +190,8 @@ int __cdecl main(int argc, char* argv[])
 		// MAIN RENDERING //
 		////////////////////////////
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindTexture(GL_TEXTURE_2D, textureframe[1]);
+		glBindFramebuffer(GL_FRAMEBUFFER, fboframe[0]);
 		glUseProgram(pidMain);
 				
 		#ifdef EDITOR_CONTROLS
@@ -199,16 +213,22 @@ int __cdecl main(int argc, char* argv[])
 
 		glRects(-1, -1, 1, 1);
 
+		// Swap ping-pong buffers
+		GLuint tmp = fboframe[0];
+		fboframe[0] = fboframe[1];
+		fboframe[1] = tmp;
+		tmp = textureframe[0];
+		textureframe[0] = textureframe[1];
+		textureframe[1] = tmp;
+
 		//////////////////
 		// POST-PROCESS //
 		//////////////////
 
-		glBindTexture(GL_TEXTURE_2D, 1);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindTexture(GL_TEXTURE_2D, textureframe[1]);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, XRES, YRES, 0);
-		
-		glActiveTexture(GL_TEXTURE0);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

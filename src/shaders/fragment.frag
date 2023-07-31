@@ -41,6 +41,7 @@ void m1(void)
 	time = m/44100.;
 	
 	vec2 uv = (gl_FragCoord.xy - res.xy/2)/res.y;
+	vec2 uv2 = gl_FragCoord.xy/res.xy;
 
 	vec3 col = vec3(0);
 
@@ -57,6 +58,8 @@ void m1(void)
 
 	float fog = 1-clamp(length(p-s)/100,0,1);
 	col += clamp(map(p-r),0,1) * fog;
+
+	col = mix(col, texture(sb1, uv2).xyz, 0.95);
 
 	o1 = vec4(col,1);
 }
