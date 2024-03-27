@@ -20,7 +20,7 @@
 #define AUDIO_WAVE	  3
 #define AUDIO_OIDOS	  4
 
-#define AUDIO_TYPE AUDIO_SHAUDIO
+#define AUDIO_TYPE AUDIO_OIDOS
 
 #define EDITOR_RELEASE 0
 
