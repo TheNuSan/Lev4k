@@ -15,11 +15,8 @@
 ;; ********** Definitions **********
 
 global _Oidos_GenerateMusic
-global _Oidos_GenerateMusic@0
 global _Oidos_StartMusic
-global _Oidos_StartMusic@0
 global _Oidos_GetPosition
-global _Oidos_GetPosition@0
 
 global _Oidos_MusicBuffer
 global _Oidos_TicksPerSecond
@@ -597,7 +594,6 @@ MakeChannel:
 
 section synth text align=1
 _Oidos_GenerateMusic:
-_Oidos_GenerateMusic@0:
 %if OIDOS_SAVE_REGISTERS
 	pusha
 %endif
@@ -742,7 +738,6 @@ ReverbFilter:
 
 section startsnd text align=1
 _Oidos_StartMusic:
-_Oidos_StartMusic@0:
 	; Start music
 	push	byte 0
 	push	byte 0
@@ -765,7 +760,6 @@ _Oidos_StartMusic@0:
 
 section getpos text align=1
 _Oidos_GetPosition:
-_Oidos_GetPosition@0:
 	push	byte 32					; sizeof(MMTIME)
 	push	_WaveTime
 	push	dword [_WaveOutHandle]
