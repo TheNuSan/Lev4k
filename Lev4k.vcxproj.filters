@@ -33,6 +33,7 @@
     <ClInclude Include="src\Audio_Shaudio.h" />
     <ClInclude Include="src\Audio_Wave.h" />
     <ClInclude Include="src\shaudio.h" />
+    <ClInclude Include="src\Audio_Oidos.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\fragment.inl">

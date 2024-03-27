@@ -18,6 +18,7 @@
 #define AUDIO_4KLANG  1
 #define AUDIO_SHAUDIO 2
 #define AUDIO_WAVE	  3
+#define AUDIO_OIDOS	  4
 
 #define AUDIO_TYPE AUDIO_SHAUDIO
 
@@ -79,6 +80,8 @@ unsigned long RecordFrame = 0;
 #include "Audio_Shaudio.h"
 #elif AUDIO_TYPE == AUDIO_WAVE
 #include "Audio_Wave.h"
+#elif AUDIO_TYPE == AUDIO_OIDOS
+#include "Audio_Oidos.h"
 #else
 #include "Audio_None.h"
 #endif
