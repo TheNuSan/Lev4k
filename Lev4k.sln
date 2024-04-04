@@ -9,7 +9,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Editor|x86 = Editor|x86
 		EditorNoRecompile|x86 = EditorNoRecompile|x86
-		Export|x86 = Export|x86
 		Release|x86 = Release|x86
 		Snapshot|x86 = Snapshot|x86
 	EndGlobalSection
@@ -18,8 +17,6 @@ Global
 		{59C1D4F3-AE93-4A0A-B4FE-60841CA865E5}.Editor|x86.Build.0 = Editor|Win32
 		{59C1D4F3-AE93-4A0A-B4FE-60841CA865E5}.EditorNoRecompile|x86.ActiveCfg = EditorNoRecompile|Win32
 		{59C1D4F3-AE93-4A0A-B4FE-60841CA865E5}.EditorNoRecompile|x86.Build.0 = EditorNoRecompile|Win32
-		{59C1D4F3-AE93-4A0A-B4FE-60841CA865E5}.Export|x86.ActiveCfg = Export|Win32
-		{59C1D4F3-AE93-4A0A-B4FE-60841CA865E5}.Export|x86.Build.0 = Export|Win32
 		{59C1D4F3-AE93-4A0A-B4FE-60841CA865E5}.Release|x86.ActiveCfg = Release|Win32
 		{59C1D4F3-AE93-4A0A-B4FE-60841CA865E5}.Release|x86.Build.0 = Release|Win32
 		{59C1D4F3-AE93-4A0A-B4FE-60841CA865E5}.Snapshot|x86.ActiveCfg = Snapshot|Win32
