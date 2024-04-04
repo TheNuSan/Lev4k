@@ -33,6 +33,9 @@
 #define AUDIO_TYPE AUDIO_NONE
 #endif
 
+// can activate this flag if the minified version doesn't compile, so you get opengl compile errors
+#define DEBUG_USE_MINIFIEDSHADER 0
+
 #ifdef EDITOR_CONTROLS
 	#define NOT_USE_MINIFIER 1
 	#define EXE_SHOWSTEP 1
