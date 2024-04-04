@@ -14,6 +14,8 @@
 // ideas for future:
 // - add timeline on top of shader, toggle visibility with a key, hade a "loop start/end" system you can adjust/activate and visible on the timeline
 
+#define USE_MIPMAPS  1
+
 #define AUDIO_NONE	  0
 #define AUDIO_4KLANG  1
 #define AUDIO_SHAUDIO 2
@@ -25,13 +27,15 @@
 #define EDITOR_RELEASE 0
 
 #define RECORD_IMG   0
-#define RECORD_IMG_LENGTH 145
+#define RECORD_IMG_LENGTH 148
 #define RECORD_SFX   0
 #define TIME_POST	 0
 
 #if RECORD_IMG
 #define AUDIO_TYPE AUDIO_NONE
 #endif
+
+#define DEBUG_USE_MINIFIEDSHADER 0
 
 #ifdef EDITOR_CONTROLS
 	#define NOT_USE_MINIFIER 1
@@ -208,9 +212,14 @@ int __cdecl main(int argc, char* argv[])
 
 		glBindTexture(GL_TEXTURE_2D, 1);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, XRES, YRES, 0);
-		
+		#if USE_MIPMAPS
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, XRES, YRES, 0);
+			glGenerateMipmap(GL_TEXTURE_2D);
+		#else
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, XRES, YRES, 0);
+		#endif	
 		glActiveTexture(GL_TEXTURE0);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

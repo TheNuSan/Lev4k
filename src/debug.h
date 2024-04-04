@@ -118,7 +118,19 @@ static bool shaderDebug(const char* shader, GLenum type, bool kill_on_failure = 
 #if EDITOR_RELEASE
 				char* newSource = updateShader("./fragment.frag");
 #else
-				char* newSource = updateShader("./src/shaders/fragment.frag");
+		#if DEBUG_USE_MINIFIEDSHADER
+			extern char* fragment_frag;
+			size_t shadlen = strlen(fragment_frag);
+			char* newSource = static_cast<char*>(calloc(shadlen + 2, sizeof(char)));
+			// for some reason, the source loaded from file is offset by 1 compare to the raw string
+			newSource[0] = ' ';
+			for (int i = 0; i < shadlen; ++i) {
+				newSource[i+1] = fragment_frag[i];
+			}
+			newSource[shadlen+1] = '\0';
+		#else
+			char* newSource = updateShader("./src/shaders/fragment.frag");
+		#endif
 #endif
 				if (!newSource) return;
 

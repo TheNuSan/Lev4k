@@ -7,7 +7,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-#define EXPORT_PNG 1
+#define EXPORT_PNG 0
 #define KEEP_EXISTING_FRAMES 1
 
 bool FileExists(const char *fileName)
