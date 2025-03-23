@@ -21,6 +21,8 @@ bool FileExists(const char *fileName)
 
 int saveScreenshot(unsigned long time)
 {
+	CreateDirectory("export", NULL);
+
 	static char filename[100];
 #if EXPORT_PNG
 	sprintf(filename, "export/img_%08lu.png", time);
