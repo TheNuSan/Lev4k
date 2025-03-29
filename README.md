@@ -7,15 +7,22 @@ It has been used for all my 4k intros, but this is a fresh start so you will fin
 - 4klang branch
 - Oidos branch
 - LastFrameBuffer branch: give you access to last frame so you can do feedback effects
-- Primordial Awakening (Revision 2023) https://www.pouet.net/prod.php?which=94122 (separate branch)
+
+And some of my intros, each in a separate branch:
+- Primordial Awakening (Revision 2023) https://demozoo.org/productions/322371/
+- Drifting Shore (Revision 2024) https://demozoo.org/productions/342196/
 
 ## Added Features
 * Audio: shader based music synth, with option for a postprocess pass (reverb, delays) and an experimental "real time" mode with midi input capabilities
 * Audio: 4klang song can be paused/seeked in editor mode without needing to made a .wav
 * Audio: Oidos song can be used
-* Shader: multipasses frome same shader file (using hacky defines), music and visuals can share code
-* Export: audio to .wav for rendering a video (define RECORD_SFX)
-* Export: frame-by-frame in png or jpg for rendering a video (define RECORD_IMG, do it separate from audio)
+* Shader: multipasses from same shader file (using hacky defines), music and visuals can share code
+* Export: audio to .wav for rendering a video
+    * define RECORD_SFX to 1
+* Export: frame-by-frame in png or jpg for rendering a video
+    * define RECORD_IMG to 1
+    * define RECORD_IMG_LENGTH to the length of recording in seconds
+    * do it separate from audio exporting
 * Particle simulation & rendering: in the Primordial Awakening branch
 * Camera location: can be used in editor for debug or finding cool camera spots
 
