@@ -33,12 +33,13 @@ float map(vec3 p) {
 }
 
 ////////////////////////////
-// MAIN PASS              //
+// ACCUMULATION PASS      //
 ////////////////////////////
 
 void m1(void)
 {	
 	time = m/44100.;
+	time *= 0.1;
 	
 	vec2 uv = (gl_FragCoord.xy - res.xy/2)/res.y;
 
@@ -62,7 +63,7 @@ void m1(void)
 }
 
 ////////////////////////////
-// POST-PROCESS           //
+// PRESENT PASS           //
 ////////////////////////////
 
 void m2(void)
@@ -73,33 +74,10 @@ void m2(void)
 	
 	vec3 col=vec3(0);
 	vec2 off=vec2(0.005,0);
-	col.x += texture(sb1, uv-off).x;
-	col.y += texture(sb1, uv).y;
-	col.z += texture(sb1, uv+off).z;
-	
+	vec4 col_r = texture(sb1, uv-off);
+	vec4 col_g = texture(sb1, uv);
+	vec4 col_b = texture(sb1, uv+off);
+	col += vec3(col_r.x/col_r.w, col_g.y/col_g.w, col_b.z/col_b.w);
+
 	o1 = vec4(col,1);
-}
-
-////////////////////////////
-// AUDIO PASS             //
-////////////////////////////
-
-float note_freq(float note, float octave) { return 440.0*pow(2.0,((octave-4.0)*12.0+note)/12.0); }
-
-void m3(void)
-{			
-	vec2 frag = gl_FragCoord.xy;
-
-	float time = (frag.x + frag.y*1920) / 44100. - 0.05;
-
-	vec2 mus = vec2(0);
-	float beat = fract(time);
-	float note = floor(time);
-	float freq = note_freq(mod(note, 8), 4);
-	mus += sin(freq*6.283*beat + sin(time*30)) * exp(-beat*3) * 0.7;
-	mus += (fract(beat*55.0 + sin(time*730)*0.2)-0.5) * exp(-beat*9) * 0.5;
-	float beat2 = min(fract(time*2), fract(time*6));
-	mus += fract(sin(beat2*342.454)*485.523) * exp(-beat2*10) * 0.2 * step(mod(time,16),12);
-
-	o1 = vec4(0,0,mus);
 }

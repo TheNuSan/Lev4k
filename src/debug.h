@@ -107,6 +107,8 @@ static bool shaderDebug(const char* shader, GLenum type, bool kill_on_failure = 
 		shaderString[inputSize] = '\0';
 		return shaderString;
 	}
+
+	unsigned long long getLastLoadTime() { return lastLoad; }
 	
 	void refreshShaders(bool force)
 	{

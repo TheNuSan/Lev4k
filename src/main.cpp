@@ -22,9 +22,14 @@
 #define AUDIO_WAVE	  3
 #define AUDIO_OIDOS	  4
 
-#define AUDIO_TYPE AUDIO_SHAUDIO
+#define AUDIO_TYPE AUDIO_NONE
 
 #define EDITOR_RELEASE 0
+
+// do you want to see the image building, or wait for the final image?
+#define EXE_GFX_PROGRESSIVE 1
+// this is the duration in seconds to compute "at 60fps" so be carefull it can go above in real time
+#define EXE_GFX_DURATION	3
 
 #define RECORD_IMG   0
 #define RECORD_IMG_LENGTH 145
@@ -44,6 +49,7 @@
 #else
 	#define NOT_USE_MINIFIER 0
 	#define EXE_SHOWSTEP 0
+	#define EXE_GFX_PROGRESSIVE 0
 #endif
 // MULTI_MAIN_LOCATION here is the position of the number in the main function define at the start of the shader
 // this is needed to compile several shaders with only one source, just switching the target function
@@ -160,6 +166,16 @@ int __cdecl main(int argc, char* argv[])
 	// initialize sound
 		
 	AudioInit();
+
+	glActiveTexture(GL_TEXTURE0);
+	GLuint fbo;
+	GLuint texfbo;
+	glGenTextures(1, &fbo);
+	glGenFramebuffers(1, &texfbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glBindTexture(GL_TEXTURE_2D, texfbo);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, XRES, YRES, 0, GL_RGBA, GL_FLOAT, NULL);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texfbo, 0);
 		
 	// main loop
 	do
@@ -181,57 +197,82 @@ int __cdecl main(int argc, char* argv[])
 			
 		AudioUpdate();
 
-		////////////////////////////
-		// MAIN RENDERING //
-		////////////////////////////
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glUseProgram(pidMain);
-				
-		#ifdef EDITOR_CONTROLS
-			glUniform3f(glGetUniformLocation(pidMain, "camPos"), editor.camPosX, editor.camPosY, editor.camPosZ);
-			glUniform3f(glGetUniformLocation(pidMain, "camRot"), editor.camRotX, editor.camRotY, 0);
-		#endif
+#ifdef EDITOR_CONTROLS
+		bool refresh = false;
+		if (timeGetTime() - lastLoad < 10) {
+			position = 0;
+			refresh = true;
+		}
+#endif
 
-		#if NEED_PREVTIME
-			glUniform1i(glGetUniformLocation(pidMain, PRETIME_VAR_NAME), prevTime);
-			prevTime = AudioGetTime();
-			glUniform1i(glGetUniformLocation(pidMain, TIME_VAR_NAME), prevTime);
-		#else
-			glUniform1i(glGetUniformLocation(pidMain, TIME_VAR_NAME), AudioGetTime());
-		#endif
+		if (position < EXE_GFX_DURATION)
+		{
+			////////////////////////////
+			// MAIN RENDERING //
+			////////////////////////////
+
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_ONE, GL_ONE);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			glUseProgram(pidMain);
+
+			#ifdef EDITOR_CONTROLS
+				glUniform3f(glGetUniformLocation(pidMain, "camPos"), editor.camPosX, editor.camPosY, editor.camPosZ);
+				glUniform3f(glGetUniformLocation(pidMain, "camRot"), editor.camRotX, editor.camRotY, 0);
+
+				if (refresh) {
+					glDisable(GL_BLEND);
+				}
+			#endif
+
+			#if NEED_PREVTIME
+				glUniform1i(glGetUniformLocation(pidMain, PRETIME_VAR_NAME), prevTime);
+				prevTime = AudioGetTime();
+				glUniform1i(glGetUniformLocation(pidMain, TIME_VAR_NAME), prevTime);
+			#else
+				glUniform1i(glGetUniformLocation(pidMain, TIME_VAR_NAME), AudioGetTime());
+			#endif
 
 		#if USE_MIDI
 			ShaderBindMidi(pidMain);
 		#endif
 
-		glRects(-1, -1, 1, 1);
+			glRects(-1, -1, 1, 1);
+		}
 
-		//////////////////
-		// POST-PROCESS //
-		//////////////////
+#if !EXE_GFX_PROGRESSIVE
+		if (position >= EXE_GFX_DURATION)
+#endif
+		{
+			//////////////////
+			// POST-PROCESS //
+			//////////////////
 
-		glBindTexture(GL_TEXTURE_2D, 1);
+			glDisable(GL_BLEND);
 
-		#if USE_MIPMAPS
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, XRES, YRES, 0);
-			glGenerateMipmap(GL_TEXTURE_2D);
-		#else
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, XRES, YRES, 0);
-		#endif	
-					
-		glActiveTexture(GL_TEXTURE0);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glBindTexture(GL_TEXTURE_2D, texfbo);
 
-		glUseProgram(pidPost);
+			#if USE_MIPMAPS
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				glGenerateMipmap(GL_TEXTURE_2D);
+			#else
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			#endif	
 
-		glUniform1i(glGetUniformLocation(pidPost, "sb1"), 0);
-		glUniform1i(glGetUniformLocation(pidPost, TIME_VAR_NAME), AudioGetTime());
+			glActiveTexture(GL_TEXTURE0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glRects(-1, -1, 1, 1);
+			glUseProgram(pidPost);
+
+			glUniform1i(glGetUniformLocation(pidPost, "sb1"), 0);
+			glUniform1i(glGetUniformLocation(pidPost, TIME_VAR_NAME), AudioGetTime());
+
+			glRects(-1, -1, 1, 1);
+		}
 
 		SwapBuffers(hDC);
 
