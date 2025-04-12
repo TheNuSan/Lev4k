@@ -204,6 +204,8 @@ int __cdecl main(int argc, char* argv[])
 		// MAIN RENDERING //
 		////////////////////////////
 
+		glViewport(0, 0, XRES, YRES);
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(pidMain);
 				

@@ -7,20 +7,30 @@ It has been used for all my 4k intros, but this is a fresh start so you will fin
 - 4klang branch
 - Oidos branch
 - LastFrameBuffer branch: give you access to last frame so you can do feedback effects
-- Primordial Awakening (Revision 2023) https://www.pouet.net/prod.php?which=94122 (separate branch)
+- exe_gfx branch: compute one image in a few seconds then present it to you
+- bonzo_compute branch: bonzomatic compute style, with 3 integer buffers you can read/write wherever you want
+
+And some of my intros, each in a separate branch:
+- Primordial Awakening (Revision 2023) https://demozoo.org/productions/322371/
+- Drifting Shore (Revision 2024) https://demozoo.org/productions/342196/
 
 ## Added Features
 * Audio: shader based music synth, with option for a postprocess pass (reverb, delays) and an experimental "real time" mode with midi input capabilities
 * Audio: 4klang song can be paused/seeked in editor mode without needing to made a .wav
 * Audio: Oidos song can be used
-* Shader: multipasses frome same shader file (using hacky defines), music and visuals can share code
-* Export: audio to .wav for rendering a video (define RECORD_SFX)
-* Export: frame-by-frame in png or jpg for rendering a video (define RECORD_IMG, do it separate from audio)
+* Shader: multipasses from same shader file (using hacky defines), music and visuals can share code
+* Export: audio to .wav for rendering a video
+    * define RECORD_SFX to 1
+* Export: frame-by-frame in png or jpg for rendering a video
+    * define RECORD_IMG to 1
+    * define RECORD_IMG_LENGTH to the length of recording in seconds
+    * do it separate from audio exporting
 * Particle simulation & rendering: in the Primordial Awakening branch
 * Camera location: can be used in editor for debug or finding cool camera spots
+* executable graphics rendering: in the exe_gfx branch, with a "progressive" mode to see the image being rendered
 
 ## Compatibility
-Current version intended to be used with Visual Studio 2017 (any version). Make sure you have a version with the latest Windows SDK installed (at least version 10.0.17134.0), or use version 8.1. With some extra configuration 2015 and 2013 should work as well. Some people had a struct_packing issue while compiling in snapshot/release, changing "Struct Member Alignment" in the project settings to "default" fixed it.
+Current version intended to be used with Visual Studio 2017 to 2022. Make sure you have a version with the latest Windows SDK installed (at least version 10.0.17134.0), or use version 8.1. With some extra configuration 2015 and 2013 should work as well. Some people had a struct_packing issue while compiling in snapshot/release, changing "Struct Member Alignment" in the project settings to "default" fixed it.
 
 ## Quick start with Shader Audio
 - open fragment.frag file
@@ -43,6 +53,11 @@ Current version intended to be used with Visual Studio 2017 (any version). Make 
 - export your music from renoise as a file named music.xrns
 - place file music.xrns into folder src/Oidos
 - launch build_music_from_xrns.bat so it generate the corresponding .obj
+- compile in visual
+
+## To make an Executable Graphics
+- make sure you switch to branch "exe_gfx"
+- specify the duration of you computing (beware, it's assuming 60fps so it can take longer in real time) in EXE_GFX_PROGRESSIVE
 - compile in visual
 
 ## Shortcuts in editor mode
