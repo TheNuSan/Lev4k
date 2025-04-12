@@ -8,6 +8,7 @@ It has been used for all my 4k intros, but this is a fresh start so you will fin
 - Oidos branch
 - LastFrameBuffer branch: give you access to last frame so you can do feedback effects
 - exe_gfx branch: compute one image in a few seconds then present it to you
+- bonzo_compute branch: bonzomatic compute style, with 3 integer buffers you can read/write wherever you want
 
 And some of my intros, each in a separate branch:
 - Primordial Awakening (Revision 2023) https://demozoo.org/productions/322371/
