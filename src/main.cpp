@@ -31,6 +31,9 @@
 #define RECORD_SFX   0
 #define TIME_POST	 0
 
+// double the number you want so you can get ping/pong system
+#define INT_TEXTURE_BUFFERS 6
+
 #if RECORD_IMG
 #define AUDIO_TYPE AUDIO_NONE
 #endif
@@ -160,7 +163,23 @@ int __cdecl main(int argc, char* argv[])
 	// initialize sound
 		
 	AudioInit();
-		
+
+	glActiveTexture(GL_TEXTURE0);
+	int ping = 0;
+	GLuint textures[INT_TEXTURE_BUFFERS];
+	glGenTextures(INT_TEXTURE_BUFFERS, textures);
+	for (int i = 0; i < INT_TEXTURE_BUFFERS; ++i)
+	{
+		glBindTexture(GL_TEXTURE_2D, textures[i]);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, XRES, YRES, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, NULL);
+	}
+
 	// main loop
 	do
 	{
@@ -192,6 +211,21 @@ int __cdecl main(int argc, char* argv[])
 			glUniform3f(glGetUniformLocation(pidMain, "camPos"), editor.camPosX, editor.camPosY, editor.camPosZ);
 			glUniform3f(glGetUniformLocation(pidMain, "camRot"), editor.camRotX, editor.camRotY, 0);
 		#endif
+
+		for (int i = 0; i < INT_TEXTURE_BUFFERS; ++i)
+		{
+			int idx = (i + ping) % INT_TEXTURE_BUFFERS;
+			if (idx < INT_TEXTURE_BUFFERS / 2) glClearTexImage(textures[i], 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
+			glBindImageTexture(i, textures[idx], 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32UI);
+			
+			// Uncomment if issues with the texture not having correct binding
+			/*char texname[6] = "ct[0]";
+			texname[3] = '0' + i;
+			glUniform1i(glGetUniformLocation(pidMain, texname), i);*/
+			glUniform1i(i, i);
+		}
+			
+		ping += INT_TEXTURE_BUFFERS / 2;
 
 		#if NEED_PREVTIME
 			glUniform1i(glGetUniformLocation(pidMain, PRETIME_VAR_NAME), prevTime);

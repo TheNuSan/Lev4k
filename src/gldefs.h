@@ -28,3 +28,5 @@
 #define glUseProgramStages ((PFNGLUSEPROGRAMSTAGESPROC)wglGetProcAddress("glUseProgramStages"))
 #define glGenProgramPipelines ((PFNGLGENPROGRAMPIPELINESPROC)wglGetProcAddress("glGenProgramPipelines"))
 #define glBindProgramPipeline ((PFNGLBINDPROGRAMPIPELINEPROC)wglGetProcAddress("glBindProgramPipeline"))
+#define glBindImageTexture ((PFNGLBINDIMAGETEXTUREPROC)wglGetProcAddress("glBindImageTexture"))
+#define glClearTexImage ((PFNGLCLEARTEXIMAGEPROC)wglGetProcAddress("glClearTexImage"))
